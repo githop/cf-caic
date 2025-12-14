@@ -1,10 +1,10 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import { Chat } from "../chat/Chat";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "CF CAIC" },
+    { name: "description", content: "Welcome to CAIC chat" },
   ];
 }
 
@@ -13,5 +13,5 @@ export function loader({ context }: Route.LoaderArgs) {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  return <Welcome message={loaderData.message} />;
+  return <Chat />;
 }

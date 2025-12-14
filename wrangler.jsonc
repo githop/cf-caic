@@ -10,6 +10,9 @@
 	"vars": {
 		"VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare"
 	},
+	"ai": {
+		"binding": "AI"
+	},
 	"observability": {
 		"enabled": true
 	}
