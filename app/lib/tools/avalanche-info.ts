@@ -39,7 +39,6 @@ export function createAvalancheInfoTool(client: CAICClient) {
         product.type === "avalancheforecast"
       ) {
         const content = formatAvalancheForecast(product);
-        console.log("content", content);
         return { content: formatAvalancheForecast(product) };
       }
       if (

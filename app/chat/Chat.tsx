@@ -3,6 +3,37 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState } from "react";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@/components/ai-elements/conversation";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import { Loader } from "@/components/ai-elements/loader";
+import {
+  PromptInput,
+  PromptInputBody,
+  PromptInputTextarea,
+  PromptInputFooter,
+  PromptInputSubmit,
+  type PromptInputMessage,
+} from "@/components/ai-elements/prompt-input";
+import {
+  Tool,
+  ToolContent,
+  ToolHeader,
+  ToolInput,
+  ToolOutput,
+} from "@/components/ai-elements/tool";
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "@/components/ai-elements/reasoning";
 
 interface Props {
   welcomeMessage?: string;
@@ -16,71 +47,80 @@ export function Chat({ welcomeMessage }: Props) {
   });
   const [input, setInput] = useState("");
 
+  const handleSubmit = (message: PromptInputMessage) => {
+    if (!message.text?.trim()) return;
+    sendMessage({ text: message.text });
+    setInput("");
+  };
+
   return (
     <div className="flex flex-col h-screen max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 dark:text-white">CAIC Chat</h1>
+      <h1 className="text-2xl font-bold mb-4">CAIC Chat</h1>
+      {welcomeMessage && <h2 className="mb-4">{welcomeMessage}</h2>}
 
-      {welcomeMessage && <h2>{welcomeMessage}</h2>}
+      <Conversation className="flex-1">
+        <ConversationContent>
+          {messages.map((message) => (
+            <Message key={message.id} from={message.role}>
+              <MessageContent>
+                {message.parts.map((part, index) => {
+                  // Handle text parts
+                  if (part.type === "text") {
+                    return (
+                      <MessageResponse key={index}>{part.text}</MessageResponse>
+                    );
+                  }
 
-      <div className="flex-1 overflow-y-auto space-y-4 mb-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`p-3 rounded-lg ${
-              message.role === "user"
-                ? "bg-blue-100 dark:bg-blue-900 dark:text-blue-100 ml-auto max-w-[80%]"
-                : "bg-gray-100 dark:bg-gray-800 dark:text-gray-100 mr-auto max-w-[80%]"
-            }`}
-          >
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-              {message.role === "user" ? "You" : "AI"}
-            </div>
-            <pre>{JSON.stringify(message.parts, null, 2)}</pre>
-            <div>
-              {message.parts.map((part, index) =>
-                part.type === "text" ? (
-                  <span key={index}>{part.text}</span>
-                ) : null,
-              )}
-            </div>
-          </div>
-        ))}
+                  // Handle tool call parts (type starts with "tool-")
+                  if (
+                    part.type.startsWith("tool-") &&
+                    "state" in part &&
+                    "input" in part
+                  ) {
+                    return (
+                      <Tool
+                        key={index}
+                        defaultOpen={part.state === "output-available"}
+                      >
+                        <ToolHeader
+                          type={part.type as `tool-${string}`}
+                          state={part.state}
+                          title={part.type.replace("tool-", "")}
+                        />
+                        <ToolContent>
+                          <ToolInput input={part.input} />
+                          <ToolOutput
+                            tool={part.type}
+                            output={part.output}
+                            errorText={part.errorText}
+                          />
+                        </ToolContent>
+                      </Tool>
+                    );
+                  }
 
-        {status === "submitted" && (
-          <div className="bg-gray-100 dark:bg-gray-800 dark:text-gray-100 p-3 rounded-lg mr-auto">
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-              AI
-            </div>
-            <div className="animate-pulse">Thinking...</div>
-          </div>
-        )}
-      </div>
+                  return null;
+                })}
+              </MessageContent>
+            </Message>
+          ))}
+          {status === "submitted" && <Loader />}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (input.trim()) {
-            sendMessage({ text: input });
-            setInput("");
-          }
-        }}
-        className="flex gap-2"
-      >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={status !== "ready"}
-          placeholder="Type a message..."
-          className="flex-1 p-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:text-white"
-        />
-        <button
-          type="submit"
-          disabled={status !== "ready" || !input.trim()}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          Send
-        </button>
-      </form>
+      <PromptInput onSubmit={handleSubmit} className="mt-4">
+        <PromptInputBody>
+          <PromptInputTextarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a message..."
+          />
+        </PromptInputBody>
+        <PromptInputFooter>
+          <PromptInputSubmit status={status} disabled={!input.trim()} />
+        </PromptInputFooter>
+      </PromptInput>
     </div>
   );
 }
