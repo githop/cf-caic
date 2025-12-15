@@ -29,13 +29,15 @@ import {
   ToolInput,
   ToolOutput,
 } from "@/components/ai-elements/tool";
+import type { CaicUiMessage } from "~/lib/tools";
+import { isCaicToolPart } from "~/lib/tools";
 
 interface Props {
   welcomeMessage?: string;
 }
 
 export function Chat({ welcomeMessage }: Props) {
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status } = useChat<CaicUiMessage>({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
@@ -52,7 +54,6 @@ export function Chat({ welcomeMessage }: Props) {
     <div className="flex flex-col h-screen max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">CAIC Chat</h1>
       {welcomeMessage && <h2 className="mb-4">{welcomeMessage}</h2>}
-
       <Conversation className="flex-1">
         <ConversationContent>
           {messages.map((message) => (
@@ -66,19 +67,15 @@ export function Chat({ welcomeMessage }: Props) {
                     );
                   }
 
-                  // Handle tool call parts (type starts with "tool-")
-                  if (
-                    part.type.startsWith("tool-") &&
-                    "state" in part &&
-                    "input" in part
-                  ) {
+                  // Handle tool call parts
+                  if (isCaicToolPart(part)) {
                     return (
                       <Tool
                         key={index}
                         defaultOpen={part.state === "output-available"}
                       >
                         <ToolHeader
-                          type={part.type as `tool-${string}`}
+                          type={part.type}
                           state={part.state}
                           title={part.type.replace("tool-", "")}
                         />

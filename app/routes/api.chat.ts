@@ -7,7 +7,11 @@ import {
 } from "ai";
 import { getModel } from "../lib/ai/ai";
 import { OLLAMA_MODELS, CF_MODELS } from "../lib/ai/models";
-import { createGeocodeTool, createAvalancheInfoTool } from "../lib/tools";
+import {
+  createGeocodeTool,
+  createAvalancheInfoTool,
+  type Tools,
+} from "../lib/tools";
 import { createCAICClient } from "../lib/caic";
 
 export async function action({ request, context }: Route.ActionArgs) {
@@ -22,15 +26,16 @@ export async function action({ request, context }: Route.ActionArgs) {
       });
 
   const caicClient = createCAICClient();
+  const tools: Tools = {
+    geocode: createGeocodeTool(context.cloudflare.env.GOOGLE_MAPS_API_KEY),
+    getAvalancheInfo: createAvalancheInfoTool(caicClient),
+  };
 
   const result = streamText({
     model,
     messages: convertToModelMessages(messages),
     stopWhen: stepCountIs(9),
-    tools: {
-      geocode: createGeocodeTool(context.cloudflare.env.GOOGLE_MAPS_API_KEY),
-      getAvalancheInfo: createAvalancheInfoTool(caicClient),
-    },
+    tools,
   });
 
   return result.toUIMessageStreamResponse();

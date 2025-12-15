@@ -17,9 +17,9 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
-import { isValidElement } from "react";
 import { CodeBlock } from "./code-block";
 import { MessageResponse } from "./message";
+import type { CaicTools } from "~/lib/tools";
 
 export type ToolProps = ComponentProps<typeof Collapsible>;
 
@@ -30,15 +30,17 @@ export const Tool = ({ className, ...props }: ToolProps) => (
   />
 );
 
+type CaicUIToolPart = ToolUIPart<CaicTools>;
+
 export type ToolHeaderProps = {
   title?: string;
-  type: ToolUIPart["type"];
-  state: ToolUIPart["state"];
+  type: CaicUIToolPart["type"];
+  state: CaicUIToolPart["state"];
   className?: string;
 };
 
-const getStatusBadge = (status: ToolUIPart["state"]) => {
-  const labels: Record<ToolUIPart["state"], string> = {
+const getStatusBadge = (status: CaicUIToolPart["state"]) => {
+  const labels: Record<CaicUIToolPart["state"], string> = {
     "input-streaming": "Pending",
     "input-available": "Running",
     // @ts-expect-error state only available in AI SDK v6
@@ -49,7 +51,7 @@ const getStatusBadge = (status: ToolUIPart["state"]) => {
     "output-denied": "Denied",
   };
 
-  const icons: Record<ToolUIPart["state"], ReactNode> = {
+  const icons: Record<CaicUIToolPart["state"], ReactNode> = {
     "input-streaming": <CircleIcon className="size-4" />,
     "input-available": <ClockIcon className="size-4 animate-pulse" />,
     // @ts-expect-error state only available in AI SDK v6
@@ -106,7 +108,7 @@ export const ToolContent = ({ className, ...props }: ToolContentProps) => (
 );
 
 export type ToolInputProps = ComponentProps<"div"> & {
-  input: ToolUIPart["input"];
+  input: CaicUIToolPart["input"];
 };
 
 export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
@@ -121,9 +123,24 @@ export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
 );
 
 export type ToolOutputProps = ComponentProps<"div"> & {
-  output: ToolUIPart["output"];
-  tool: string;
-  errorText: ToolUIPart["errorText"];
+  output: CaicUIToolPart["output"];
+  tool: CaicUIToolPart["type"];
+  errorText: CaicUIToolPart["errorText"];
+};
+
+const toolRenderers: Record<
+  CaicUIToolPart["type"],
+  (output: CaicUIToolPart["output"]) => ReactNode
+> = {
+  "tool-geocode": (output) => (
+    <CodeBlock language="json" code={JSON.stringify(output, null, 2)} />
+  ),
+  "tool-getAvalancheInfo": (output) => {
+    if (output && typeof output === "object" && "content" in output) {
+      return <MessageResponse>{output.content}</MessageResponse>;
+    }
+    return <CodeBlock language="json" code={JSON.stringify(output, null, 2)} />;
+  },
 };
 
 export const ToolOutput = ({
@@ -137,28 +154,7 @@ export const ToolOutput = ({
     return null;
   }
 
-  let Output;
-
-  if (tool.includes("geocode")) {
-    Output = (
-      <CodeBlock
-        language="json"
-        code={JSON.stringify(output, null, 2)}
-      ></CodeBlock>
-    );
-  } else if (
-    tool.includes("getAvalancheInfo") &&
-    output != null &&
-    (output as object).hasOwnProperty("content")
-  ) {
-    Output = (
-      <MessageResponse>
-        {(output as { content: string }).content}
-      </MessageResponse>
-    );
-  } else {
-    Output = <div>{output as unknown as ReactNode}</div>;
-  }
+  const Output = output ? toolRenderers[tool](output) : null;
 
   return (
     <div className={cn("space-y-2 p-4", className)} {...props}>
