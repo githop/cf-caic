@@ -5,7 +5,7 @@ import { DefaultChatTransport } from "ai";
 import { useState } from "react";
 
 interface Props {
-  welcomeMessage: string;
+  welcomeMessage?: string;
 }
 
 export function Chat({ welcomeMessage }: Props) {
@@ -20,7 +20,7 @@ export function Chat({ welcomeMessage }: Props) {
     <div className="flex flex-col h-screen max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4 dark:text-white">CAIC Chat</h1>
 
-      <h2>{welcomeMessage}</h2>
+      {welcomeMessage && <h2>{welcomeMessage}</h2>}
 
       <div className="flex-1 overflow-y-auto space-y-4 mb-4">
         {messages.map((message) => (
@@ -35,6 +35,7 @@ export function Chat({ welcomeMessage }: Props) {
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
               {message.role === "user" ? "You" : "AI"}
             </div>
+            <pre>{JSON.stringify(message.parts, null, 2)}</pre>
             <div>
               {message.parts.map((part, index) =>
                 part.type === "text" ? (

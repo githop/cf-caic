@@ -13,5 +13,5 @@ export function loader({ context }: Route.LoaderArgs) {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  return <Chat />;
+  return <Chat welcomeMessage={loaderData.message} />;
 }
