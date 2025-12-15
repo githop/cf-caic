@@ -17,7 +17,7 @@ type CloudflareConfig = {
 export function getModel(config: OllamaConfig): LanguageModel;
 export function getModel(config: CloudflareConfig): LanguageModel;
 export function getModel(
-  config: OllamaConfig | CloudflareConfig
+  config: OllamaConfig | CloudflareConfig,
 ): LanguageModel {
   if (config.provider === "ollama") {
     const ollama = createOpenAICompatible({
@@ -32,5 +32,5 @@ export function getModel(
     gateway: { id: "caic-gateway" },
   });
   // Cast needed as workers-ai-provider has a strict internal type for model names
-  return workersai(config.modelName as Parameters<typeof workersai>[0]);
+  return workersai(config.modelName as any);
 }

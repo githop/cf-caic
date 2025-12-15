@@ -148,6 +148,7 @@ export const ToolOutput = ({
     );
   } else if (
     tool.includes("getAvalancheInfo") &&
+    output != null &&
     (output as object).hasOwnProperty("content")
   ) {
     Output = (

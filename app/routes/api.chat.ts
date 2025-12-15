@@ -17,7 +17,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     ? getModel({ provider: "ollama", modelName: OLLAMA_MODELS.QWEN })
     : getModel({
         provider: "cloudflare",
-        modelName: CF_MODELS.QWEN,
+        modelName: CF_MODELS.LLAMA,
         env: context.cloudflare.env,
       });
 

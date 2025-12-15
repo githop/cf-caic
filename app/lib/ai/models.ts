@@ -6,6 +6,7 @@ export const OLLAMA_MODELS = {
 
 export const CF_MODELS = {
   QWEN: "@cf/qwen/qwen3-30b-a3b-fp8",
+  LLAMA: "@cf/meta/llama-4-scout-17b-16e-instruct",
 } as const;
 
 export const Models = { ...CF_MODELS, ...OLLAMA_MODELS } as const;
