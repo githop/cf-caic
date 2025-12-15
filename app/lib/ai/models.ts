@@ -1,7 +1,7 @@
 export const OLLAMA_MODELS = {
   LLAMA: "llama3.2:3b-instruct-fp16-num_ctx-32k",
   GEMMA: "gemma3:4b-it-fp16-num_ctx-32k",
-  QWEN: "qwen3:4b-thinking-2507-fp16",
+  QWEN: "qwen3:4b-instruct-2507-fp16",
 } as const;
 
 export const CF_MODELS = {
