@@ -163,14 +163,6 @@ interface ProductWithArea<T> {
  * // Fetch all products
  * const products = await client.getProducts();
  *
- * // Filter to just avalanche forecasts
- * const forecasts = client.filterAvalancheForecasts(products);
- *
- * // Get geographic areas for forecasts
- * const areas = await client.getAvalancheForecastAreas();
- *
- * // Match forecasts with their geographic areas
- * const forecastsWithAreas = client.matchProductsToAreas(forecasts, areas);
  * ```
  */
 class CAICClient {
@@ -233,36 +225,6 @@ class CAICClient {
   // ============================================================
   // Location-based helpers
   // ============================================================
-
-  /**
-   * Find the geographic area for a specific product
-   *
-   * @param product - The product to find the area for
-   * @param featureCollection - GeoJSON FeatureCollection with area data
-   * @returns The matching Feature or undefined if not found
-   */
-  findAreaForProduct<T extends { areaId: string }>(
-    product: T,
-    featureCollection: FeatureCollection,
-  ): Feature | undefined {
-    return featureCollection.features.find(
-      (f) => f.properties.id === product.areaId,
-    );
-  }
-
-  /**
-   * Find all products for a specific geographic area
-   *
-   * @param areaId - The area ID to search for
-   * @param products - Array of products to search
-   * @returns Array of products matching the area ID
-   */
-  findProductsForArea<T extends { areaId: string }>(
-    areaId: string,
-    products: T[],
-  ): T[] {
-    return products.filter((p) => p.areaId === areaId);
-  }
 
   async fetchForecastForProduct<T extends ProductType>(product: T) {
     const products = await this.getProducts();
