@@ -130,12 +130,27 @@ export function Chat({ welcomeMessage }: Props) {
                   <div className="flex items-start gap-3 text-left">
                     <TriangleAlert className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                     <div className="space-y-1">
-                      <p className="font-medium">This is a side project!</p>
+                      <p className="font-medium">
+                        This is a side project for educational purposes
+                      </p>
                       <p className="text-sm text-muted-foreground">
-                        This is an side project used for learning how tool
-                        calling works. Information provided here may not be
-                        accurate. Always verify avalanche forecasts and
-                        conditions with official CAIC sources.
+                        Information provided here may not be accurate. Always
+                        verify avalanche forecasts and conditions with the
+                        official CAIC site.
+                      </p>
+
+                      <p className="text-sm text-muted-foreground">
+                        What is CAIC? The Colorado Avalanche Information Center
+                        provides forecasts and reports for backcountry
+                        recreators. Visit their official site at{" "}
+                        <a
+                          href="https://avalanche.state.co.us/"
+                          target="_blank"
+                          rel="noopener"
+                          className="text-primary underline-offset-4 hover:underline"
+                        >
+                          https://avalanche.state.co.us/
+                        </a>
                       </p>
                     </div>
                   </div>
