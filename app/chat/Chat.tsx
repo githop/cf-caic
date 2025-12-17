@@ -31,10 +31,16 @@ import {
 } from "@/components/ai-elements/tool";
 import type { CaicUiMessage } from "~/lib/tools";
 import { isCaicToolPart } from "~/lib/tools";
+import { Suggestion, Suggestions } from "~/components/ai-elements/suggestion";
 
 interface Props {
   welcomeMessage?: string;
 }
+
+const suggestions = [
+  "What's the avalanche forecast for Berthoud Pass?",
+  "What's the regional discussion for Rocky Mountain NP?",
+];
 
 export function Chat({ welcomeMessage }: Props) {
   const { messages, sendMessage, status } = useChat<CaicUiMessage>({
@@ -100,7 +106,19 @@ export function Chat({ welcomeMessage }: Props) {
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-
+      <div className="flex">
+        <Suggestions>
+          {suggestions.map((suggestion) => (
+            <Suggestion
+              key={suggestion}
+              onClick={() => {
+                sendMessage({ text: suggestion });
+              }}
+              suggestion={suggestion}
+            />
+          ))}
+        </Suggestions>
+      </div>
       <PromptInput onSubmit={handleSubmit} className="mt-4">
         <PromptInputBody>
           <PromptInputTextarea
