@@ -23,7 +23,7 @@ interface GoogleGeocodeResponse {
 export function createGeocodeTool(apiKey: string) {
   return tool({
     description:
-      "Convert a location name to latitude/longitude coordinates. Biased toward Colorado results. Use this tool when you need coordinates for a location name.",
+      "Convert a location name (e.g. 'Berthoud Pass') to latitude/longitude coordinates. ALWAYS use this tool first before fetching avalanche info.",
     inputSchema: z.object({
       location: z
         .string()

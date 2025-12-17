@@ -16,17 +16,21 @@ import {
 export function createAvalancheInfoTool(client: CAICClient) {
   return tool({
     description:
-      "Fetch avalanche forecast, regional discussion, or special product for a given location. Requires lat/lng coordinates (numbers) - use the geocode tool first if you only have a location name.",
+      "Fetch avalanche forecast, regional discussion, or special product for a given location. You MUST use the 'geocode' tool first to get the exact latitude and longitude for any location name. Do not guess coordinates.",
     inputSchema: z.object({
       productType: z
         .enum(["avalancheforecast", "regionaldiscussion", "specialproduct"])
         .describe("The type of avalanche product to fetch"),
       lat: z
         .number()
-        .describe("Latitude of the location - a number like 39.7983203"),
+        .describe(
+          "Latitude of the location (e.g. 39.798). Obtain this from the 'geocode' tool.",
+        ),
       lng: z
         .number()
-        .describe("Longitude of the location - a number like -105.7777849"),
+        .describe(
+          "Longitude of the location (e.g. -105.777). Obtain this from the 'geocode' tool.",
+        ),
     }),
     execute: async ({ productType, lat, lng }) => {
       const product = await client.fetchForecastForLocation(productType, {
