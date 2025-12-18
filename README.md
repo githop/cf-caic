@@ -1,79 +1,65 @@
-# Welcome to React Router!
+# CAIC AI Assistant
 
-A modern, production-ready template for building full-stack React applications using React Router.
+An AI-powered chat interface for accessing Colorado Avalanche Information Center (CAIC) data. Built with React Router v7 and deployed on Cloudflare Workers.
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- **AI Chat Interface**: Interactive chat to query avalanche forecasts and conditions.
+- **CAIC Integration**: Direct integration with CAIC's Avid API for real-time avalanche data.
+- **Location Awareness**: Geocoding tools to find forecasts by city, trailhead, or coordinates.
+- **Modern Stack**:
+  - [React Router v7](https://reactrouter.com/) for the framework.
+  - [Cloudflare Workers](https://workers.cloudflare.com/) for serverless hosting.
+  - [Tailwind CSS 4](https://tailwindcss.com/) for styling.
+  - [Vercel AI SDK](https://sdk.vercel.ai/) for AI capabilities.
+  - [Radix UI](https://www.radix-ui.com/) for accessible components.
 
 ## Getting Started
 
+### Prerequisites
+
+- [pnpm](https://pnpm.io/)
+- [Wrangler](https://developers.cloudflare.com/workers/wrangler/) (for deployment)
+- Google Maps API Key (for geocoding)
+
 ### Installation
 
-Install the dependencies:
-
 ```bash
-npm install
+pnpm install
 ```
 
 ### Development
 
-Start the development server with HMR:
+For local development, the app uses Ollama for AI by default (see `app/routes/api.chat.ts`).
+
+Start the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+### Deployment
 
-## Previewing the Production Build
-
-Preview the production build locally:
+Set up your secrets in Cloudflare:
 
 ```bash
-npm run preview
+npx wrangler secret put GOOGLE_MAPS_API_KEY
 ```
 
-## Building for Production
-
-Create a production build:
+Deploy to Cloudflare Workers:
 
 ```bash
-npm run build
+pnpm run deploy
 ```
 
-## Deployment
+## Project Structure
 
-Deployment is done using the Wrangler CLI.
-
-To build and deploy directly to production:
-
-```sh
-npm run deploy
-```
-
-To deploy a preview URL:
-
-```sh
-npx wrangler versions upload
-```
-
-You can then promote a version to production after verification or roll it out progressively.
-
-```sh
-npx wrangler versions deploy
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+- `app/chat`: Chat interface components.
+- `app/lib/caic`: CAIC API client and data formatters.
+- `app/lib/tools`: AI tools for the assistant (avalanche info, geocoding).
+- `app/routes`: API and page routes.
+- `workers/app.ts`: Cloudflare Workers entry point.
 
 ---
 
-Built with ❤️ using React Router.
+Built with ❤️ using React Router and Cloudflare.
