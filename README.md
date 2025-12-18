@@ -1,5 +1,7 @@
 # CAIC AI Assistant
 
+![](./cf-caic-diagram.png)
+
 An AI-powered chat interface for accessing Colorado Avalanche Information Center (CAIC) data. Built with React Router v7 and deployed on Cloudflare Workers.
 
 ## Features
